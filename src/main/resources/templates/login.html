@@ -4,24 +4,47 @@
     <title>Login</title>
 </head>
 <body>
+
 <h1>Please Sign In</h1>
+
+<!-- Error message -->
 <div th:if="${param.error}" style="color:red">
     Invalid username or password.
 </div>
+
+<!-- Logout message -->
 <div th:if="${param.logout}" style="color:green">
     You have been logged out.
 </div>
-<!-- th:action automatically includes the CSRF token -->
+
+<!-- Login form -->
 <form th:action="@{/login}" method="post">
     <div>
-        <label>Username: <input type="text" name="username" autofocus="autofocus"/></label>
+        <label>
+            Username:
+            <input type="text" name="username" autofocus="autofocus"/>
+        </label>
     </div>
+
     <div>
-        <label>Password: <input type="password" name="password"/></label>
+        <label>
+            Password:
+            <input type="password" name="password"/>
+        </label>
     </div>
+
     <div>
         <input type="submit" value="Sign In"/>
     </div>
 </form>
+
+<hr/>
+
+<!-- Register link (ALWAYS visible) -->
+<p>
+    Don't have an account?
+    <a href="/register" th:href="@{/register}">Register</a>
+</p>
+
 </body>
 </html>

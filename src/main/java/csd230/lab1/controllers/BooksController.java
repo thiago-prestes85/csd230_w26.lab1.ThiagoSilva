@@ -1,19 +1,39 @@
 package csd230.lab1.controllers;
 
+import csd230.lab1.entities.BookEntity;
+import csd230.lab1.repositories.BookEntityRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequestMapping("/books")
 public class BooksController {
 
-    @GetMapping("/books")
+    private final BookEntityRepository bookRepository;
+
+    public BooksController(BookEntityRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    // LIST PAGE: /books
+    @GetMapping
     public String books(Model model) {
-        // Temporary placeholder so the page loads.
-        // In Lab 3 you'll load real books from DB.
-        model.addAttribute("books", List.of());
+        model.addAttribute("books", bookRepository.findAll());
         return "booklist";
+    }
+
+    // SHOW FORM: /books/add
+    @GetMapping("/add")
+    public String showAddForm(Model model) {
+        model.addAttribute("book", new BookEntity());
+        return "bookForm";
+    }
+
+    // SAVE: POST /books/add
+    @PostMapping("/add")
+    public String saveBook(@ModelAttribute("book") BookEntity book) {
+        bookRepository.save(book);
+        return "redirect:/books";
     }
 }

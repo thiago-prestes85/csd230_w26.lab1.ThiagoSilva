@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Cart Details</title>
 </head>
 <body>
 
 <h2>Your Shopping Cart</h2>
 
-<p th:if="${cart.products.isEmpty()}">Your cart is empty.</p>
+<p><b>Logged user:</b> <span th:text="${cart.user.username}">username</span></p>
 
-<table th:if="${!cart.products.isEmpty()}" border="1">
+<p th:if="${cart.products == null or cart.products.isEmpty()}">Your cart is empty.</p>
+
+<table th:if="${cart.products != null and !cart.products.isEmpty()}" border="1">
     <tr>
         <th>ID</th>
-        <th>Item</th>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Action</th>
     </tr>
 
-    <tr th:each="p : ${cart.products}">
-        <td th:text="${p.id}"></td>
-        <td th:text="${p}"></td>
+    <tr th:each="b : ${cart.products}">
+        <td th:text="${b.id}">1</td>
+        <td th:text="${b.title}">Book Title</td>
+        <td th:text="${b.price}">9.99</td>
+        <td>
+            <a th:href="@{/cart/remove/{id}(id=${b.id})}">Remove</a>
+        </td>
     </tr>
 </table>
 
 <br>
-
-<form method="post" action="/cart/checkout" th:if="${!cart.products.isEmpty()}">
-    <button type="submit">Checkout</button>
-</form>
-
-<p th:if="${error}" th:text="${error}" style="color:red"></p>
-
-<br>
-<a href="/">Back Home</a>
+<a href="/books">Back to Book List</a>
 
 </body>
 </html>

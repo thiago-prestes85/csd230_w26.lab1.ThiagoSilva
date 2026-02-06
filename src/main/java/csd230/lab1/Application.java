@@ -21,13 +21,13 @@ public class Application {
         return args -> {
 
             // Create admin user if it doesn't exist
-            UserEntity admin = userRepository.findByUsername("admin");
+            UserEntity admin = userRepository.findByUsername("admin").orElse(null);
             if (admin == null) {
                 userRepository.save(new UserEntity("admin", passwordEncoder.encode("admin"), "ROLE_ADMIN"));
             }
 
             // Create regular user if it doesn't exist
-            UserEntity user = userRepository.findByUsername("user");
+            UserEntity user = userRepository.findByUsername("user").orElse(null);
             if (user == null) {
                 userRepository.save(new UserEntity("user", passwordEncoder.encode("user"), "ROLE_USER"));
             }
