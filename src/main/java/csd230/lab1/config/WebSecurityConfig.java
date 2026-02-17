@@ -34,12 +34,15 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+
                                 "/register",
                                 "/login",
                                 "/h2-console/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/api/**"
+
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
