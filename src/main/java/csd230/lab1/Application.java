@@ -7,6 +7,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 public class Application {
@@ -15,7 +17,19 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    // Seed default users for Lecture 2.6
+    // Option A (Lecture 2.9): Global CORS configuration
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                // Allow access to all /api endpoints from any origin
+                registry.addMapping("/api/**").allowedOrigins("*");
+            }
+        };
+    }
+
+
     @Bean
     CommandLineRunner seedUsers(UserEntityRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {

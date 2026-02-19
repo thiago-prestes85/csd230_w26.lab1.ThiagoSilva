@@ -8,6 +8,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+
 
 @Configuration
 public class WebSecurityConfig {
@@ -34,17 +37,24 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                // Public pages
+                                new AntPathRequestMatcher("/register"),
+                                new AntPathRequestMatcher("/login"),
 
-                                "/register",
-                                "/login",
-                                "/h2-console/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/api/**"
+                                // H2
+                                new AntPathRequestMatcher("/h2-console/**"),
 
+                                // Swagger / OpenAPI (IMPORTANT)
+                                new AntPathRequestMatcher("/v3/api-docs"),
+                                new AntPathRequestMatcher("/v3/api-docs/**"),
+                                new AntPathRequestMatcher("/v3/api-docs.yaml"),
+                                new AntPathRequestMatcher("/swagger-ui.html"),
+                                new AntPathRequestMatcher("/swagger-ui/**"),
+
+                                // REST API
+                                new AntPathRequestMatcher("/api/**")
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
@@ -53,8 +63,16 @@ public class WebSecurityConfig {
                 )
                 .logout(logout -> logout.permitAll());
 
-        // H2 console needs these
-        http.csrf(csrf -> csrf.disable());
+        http.csrf(csrf -> csrf.ignoringRequestMatchers(
+                new AntPathRequestMatcher("/h2-console/**"),
+                new AntPathRequestMatcher("/v3/api-docs"),
+                new AntPathRequestMatcher("/v3/api-docs/**"),
+                new AntPathRequestMatcher("/v3/api-docs.yaml"),
+                new AntPathRequestMatcher("/swagger-ui.html"),
+                new AntPathRequestMatcher("/swagger-ui/**"),
+                new AntPathRequestMatcher("/api/**")
+        ));
+
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
         return http.build();

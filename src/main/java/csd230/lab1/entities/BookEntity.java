@@ -13,11 +13,13 @@ public class BookEntity {
     private String title;
     private String author;
 
+    // Publisher price
     private double pubPrice;
 
     private int copies;
 
-    public BookEntity() {}
+    public BookEntity() {
+    }
 
     public BookEntity(String title, String author, double pubPrice, int copies) {
         this.title = title;
@@ -26,23 +28,54 @@ public class BookEntity {
         this.copies = copies;
     }
 
-    public Long getId() { return id; }
+    // Getters and Setters
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
 
-    public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
+    public Long getId() {
+        return id;
+    }
 
-    public double getPubPrice() { return pubPrice; }
-    public void setPubPrice(double pubPrice) { this.pubPrice = pubPrice; }
+    // REQUIRED for REST PUT (Lecture 2.9 / Lab 4)
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public int getCopies() { return copies; }
-    public void setCopies(int copies) { this.copies = copies; }
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public double getPubPrice() {
+        return pubPrice;
+    }
+
+    public void setPubPrice(double pubPrice) {
+        this.pubPrice = pubPrice;
+    }
+
+    public int getCopies() {
+        return copies;
+    }
+
+    public void setCopies(int copies) {
+        this.copies = copies;
+    }
 
     @Override
     public String toString() {
-        return "BookEntity{id=" + id +
+        return "BookEntity{" +
+                "id=" + id +
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", pubPrice=" + pubPrice +
