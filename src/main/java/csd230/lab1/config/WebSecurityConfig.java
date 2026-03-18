@@ -35,11 +35,15 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 // Public pages
                                 new AntPathRequestMatcher("/register"),
                                 new AntPathRequestMatcher("/login"),
+
+                                //Auth
+                                new AntPathRequestMatcher("/auth/**"),
 
                                 // H2
                                 new AntPathRequestMatcher("/h2-console/**"),
@@ -53,6 +57,8 @@ public class WebSecurityConfig {
 
                                 // REST API
                                 new AntPathRequestMatcher("/api/**")
+
+
                         ).permitAll()
                         .anyRequest().permitAll()
                 )
@@ -70,7 +76,8 @@ public class WebSecurityConfig {
                 new AntPathRequestMatcher("/v3/api-docs.yaml"),
                 new AntPathRequestMatcher("/swagger-ui.html"),
                 new AntPathRequestMatcher("/swagger-ui/**"),
-                new AntPathRequestMatcher("/api/**")
+                new AntPathRequestMatcher("/api/**"),
+                new AntPathRequestMatcher("/auth/**")
         ));
 
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));

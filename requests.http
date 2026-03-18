@@ -1,0 +1,19 @@
+POST http://localhost:8080/api/rest/books
+Content-Type: application/json
+
+{
+  "title": "Java Basics",
+  "author": "Thiago",
+  "pubPrice": 29.99,
+  "copies": 5
+}
+
+###
+
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
