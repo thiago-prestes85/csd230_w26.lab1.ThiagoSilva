@@ -2,7 +2,7 @@ name: Java CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "lab7-cloud-deployment" ]
 
 jobs:
   test:
