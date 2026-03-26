@@ -119,10 +119,12 @@
 
     <build>
         <plugins>
-            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>csd230.lab1.Application</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

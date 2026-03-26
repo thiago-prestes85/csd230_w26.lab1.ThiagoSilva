@@ -9,8 +9,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
+import java.util.List;
 
 @Configuration
 public class WebSecurityConfig {
@@ -35,38 +38,24 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                // Public pages
                                 new AntPathRequestMatcher("/register"),
                                 new AntPathRequestMatcher("/login"),
-
-                                //Auth
                                 new AntPathRequestMatcher("/auth/**"),
-
-                                // H2
                                 new AntPathRequestMatcher("/h2-console/**"),
-
-                                // Swagger / OpenAPI (IMPORTANT)
                                 new AntPathRequestMatcher("/v3/api-docs"),
                                 new AntPathRequestMatcher("/v3/api-docs/**"),
                                 new AntPathRequestMatcher("/v3/api-docs.yaml"),
                                 new AntPathRequestMatcher("/swagger-ui.html"),
-                                new AntPathRequestMatcher("/swagger-ui/**"),
-
-                                // REST API
-                                new AntPathRequestMatcher("/api/**")
-
-
+                                new AntPathRequestMatcher("/swagger-ui/**")
                         ).permitAll()
                         .anyRequest().permitAll()
                 )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/books", true)
-                        .permitAll()
-                )
+                .formLogin(form -> form.disable())
+
                 .logout(logout -> logout.permitAll());
 
         http.csrf(csrf -> csrf.ignoringRequestMatchers(
@@ -84,4 +73,22 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
 }
+
+
+
