@@ -9,11 +9,24 @@ function App() {
     const [title, setTitle] = useState("")
     const [price, setPrice] = useState("")
 
+    const [editingBook, setEditingBook] = useState(null)
+    const [editTitle, setEditTitle] = useState("")
+    const [editPrice, setEditPrice] = useState("")
+
+
+
     useEffect(() => {
-        axiosInstance.get("/rest/books")
+        axiosInstance.get("/api/rest/books")
             .then(res => setBooks(res.data))
             .catch(err => console.error(err))
     }, [])
+
+    const startEdit = (book) => {
+        setEditingBook(book.id)
+        setEditTitle(book.title)
+        setEditPrice(book.pubPrice)
+    }
+
 
     useEffect(() => {
         const token = localStorage.getItem("token")?.trim()
@@ -23,7 +36,7 @@ function App() {
 
     // DELETE FUNCTION
     const deleteBook = (id) => {
-        axiosInstance.delete(`/rest/books/${id}`)
+        axiosInstance.delete(`/api/rest/books/${id}`)
             .then(() => {
                 setBooks(books.filter(book => book.id !== id))
             })
@@ -31,7 +44,7 @@ function App() {
     }
 
     const addBook = () => {
-        axiosInstance.post("/rest/books", {
+        axiosInstance.post("/api/rest/books", {
             title: title,
             pubPrice: parseFloat(price)
         })
@@ -39,6 +52,18 @@ function App() {
                 setBooks([...books, res.data])
                 setTitle("")
                 setPrice("")
+            })
+            .catch(err => console.error(err))
+    }
+
+    const updateBook = (id) => {
+        axiosInstance.put(`/api/rest/books/${id}`, {
+            title: editTitle,
+            pubPrice: parseFloat(editPrice)
+        })
+            .then(res => {
+                setBooks(books.map(b => b.id === id ? res.data : b))
+                setEditingBook(null)
             })
             .catch(err => console.error(err))
     }
@@ -120,22 +145,32 @@ function App() {
                             padding: "10px",
                             borderBottom: "1px solid #ddd"
                         }}>
-                            <span>
-                                {book.title} - ${book.pubPrice}
-                            </span>
+
+                            {editingBook === book.id ? (
+                                <>
+                                    <input
+                                        value={editTitle}
+                                        onChange={(e) => setEditTitle(e.target.value)}
+                                    />
+                                    <input
+                                        value={editPrice}
+                                        onChange={(e) => setEditPrice(e.target.value)}
+                                    />
+                                    <button onClick={() => updateBook(book.id)}>Save</button>
+                                </>
+                            ) : (
+                                <span>
+                {book.title} - ${book.pubPrice}
+            </span>
+                            )}
 
                             {isAdmin && (
-                                <div>
-                                    <button style={btnStyle}>Edit</button>
-
-                                    <button
-                                        style={{ ...btnStyle, background: "#dc3545" }}
-                                        onClick={() => deleteBook(book.id)}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
+                                <>
+                                    <button onClick={() => startEdit(book)}>Edit</button>
+                                    <button onClick={() => deleteBook(book.id)}>Delete</button>
+                                </>
                             )}
+
                         </li>
                     ))}
                 </ul>

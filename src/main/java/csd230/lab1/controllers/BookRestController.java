@@ -11,7 +11,7 @@ import java.util.List;
 @Tag(name = "Book REST API", description = "JSON API for managing books")
 @RestController
 @RequestMapping("/api/rest/books")
-@CrossOrigin(origins = "*") // Allow React/Frontend access
+@CrossOrigin(origins = "*")
 public class BookRestController {
 
     private final BookEntityRepository bookRepository;
@@ -30,7 +30,7 @@ public class BookRestController {
     @GetMapping("/{id}")
     public BookEntity getBook(@PathVariable Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+                .orElseThrow(() -> new RuntimeException("Book not found"));
     }
 
     @Operation(summary = "Create a new book")
@@ -39,21 +39,18 @@ public class BookRestController {
         return bookRepository.save(newBook);
     }
 
-    @Operation(summary = "Update or Replace a book")
+    @Operation(summary = "Update a book")
     @PutMapping("/{id}")
-    public BookEntity replaceBook(@RequestBody BookEntity newBook, @PathVariable Long id) {
+    public BookEntity updateBook(@RequestBody BookEntity updatedBook, @PathVariable Long id) {
         return bookRepository.findById(id)
                 .map(book -> {
-                    book.setAuthor(newBook.getAuthor());
-                    book.setTitle(newBook.getTitle());
-                    book.setPubPrice(newBook.getPubPrice());
-                    book.setCopies(newBook.getCopies());
+                    book.setAuthor(updatedBook.getAuthor());
+                    book.setTitle(updatedBook.getTitle());
+                    book.setPubPrice(updatedBook.getPubPrice());
+                    book.setCopies(updatedBook.getCopies());
                     return bookRepository.save(book);
                 })
-                .orElseGet(() -> {
-                    newBook.setId(id);
-                    return bookRepository.save(newBook);
-                });
+                .orElseThrow(() -> new RuntimeException("Book not found"));
     }
 
     @Operation(summary = "Delete a book")

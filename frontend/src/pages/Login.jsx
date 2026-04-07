@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axiosInstance from "../services/axiosConfig";
 import axios from "axios";
 
 function Login() {
@@ -7,7 +8,7 @@ function Login() {
     const [password, setPassword] = useState("");
 
     const handleLogin = () => {
-        axios.post("http://localhost:8080/auth/login", {
+        axiosInstance.post("/auth/login", {
             username,
             password
         })
