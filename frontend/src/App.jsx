@@ -6,6 +6,8 @@ function App() {
 
     const [books, setBooks] = useState([])
     const [isAdmin, setIsAdmin] = useState(false)
+    const [title, setTitle] = useState("")
+    const [price, setPrice] = useState("")
 
     useEffect(() => {
         axiosInstance.get("/rest/books")
@@ -14,33 +16,130 @@ function App() {
     }, [])
 
     useEffect(() => {
-        const token = localStorage.getItem("token")?.trim();
-
-        console.log("TOKEN:", token);
-
-        setIsAdmin(token === "admin-token");
+        const token = localStorage.getItem("token")?.trim()
+        console.log("TOKEN:", token)
+        setIsAdmin(token === "admin-token")
     }, [])
 
+    // DELETE FUNCTION
+    const deleteBook = (id) => {
+        axiosInstance.delete(`/rest/books/${id}`)
+            .then(() => {
+                setBooks(books.filter(book => book.id !== id))
+            })
+            .catch(err => console.error(err))
+    }
+
+    const addBook = () => {
+        axiosInstance.post("/rest/books", {
+            title: title,
+            pubPrice: parseFloat(price)
+        })
+            .then(res => {
+                setBooks([...books, res.data])
+                setTitle("")
+                setPrice("")
+            })
+            .catch(err => console.error(err))
+    }
+
+    const btnStyle = {
+        padding: "6px 10px",
+        marginLeft: "5px",
+        background: "#007bff",
+        color: "white",
+        border: "none",
+        borderRadius: "5px",
+        cursor: "pointer"
+    }
+
     return (
-        <div>
-            <h1>Book List</h1>
+        <div style={{ fontFamily: "Arial", background: "#f5f5f5", minHeight: "100vh" }}>
 
-            <p>isAdmin: {isAdmin ? "TRUE" : "FALSE"}</p>
+            {/* NAVBAR */}
+            <div style={{
+                background: "#333",
+                color: "white",
+                padding: "15px",
+                textAlign: "center",
+                fontSize: "20px"
+            }}>
+                My Book Store
+            </div>
 
-            <ul>
-                {books.map(book => (
-                    <li key={book.id}>
-                        {book.title} - ${book.pubPrice}
+            {/* CONTENT */}
+            <div style={{
+                maxWidth: "800px",
+                margin: "20px auto",
+                background: "white",
+                padding: "20px",
+                borderRadius: "8px",
+                boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
+            }}>
 
-                        {isAdmin && (
-                            <div>
-                                <button>Edit</button>
-                                <button>Delete</button>
-                            </div>
-                        )}
-                    </li>
-                ))}
-            </ul>
+                <h1 style={{ textAlign: "center" }}>Book List</h1>
+
+                <p style={{ textAlign: "center" }}>
+                    isAdmin: <strong>{isAdmin ? "TRUE" : "FALSE"}</strong>
+                </p>
+
+                {isAdmin && (
+                    <div style={{ marginBottom: "20px", textAlign: "center" }}>
+                        <input
+                            placeholder="Title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            style={{ marginRight: "10px", padding: "5px" }}
+                        />
+
+                        <input
+                            placeholder="Price"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            style={{ marginRight: "10px", padding: "5px" }}
+                        />
+
+                        <button style={btnStyle} onClick={addBook}>
+                            Add Book
+                        </button>
+                    </div>
+                )}
+
+                <ul style={{ listStyle: "none", padding: 0 }}>
+                    {books.length === 0 && (
+                        <p style={{ textAlign: "center", color: "#888" }}>
+                            No books available
+                        </p>
+                    )}
+
+                    {books.map(book => (
+                        <li key={book.id} style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            padding: "10px",
+                            borderBottom: "1px solid #ddd"
+                        }}>
+                            <span>
+                                {book.title} - ${book.pubPrice}
+                            </span>
+
+                            {isAdmin && (
+                                <div>
+                                    <button style={btnStyle}>Edit</button>
+
+                                    <button
+                                        style={{ ...btnStyle, background: "#dc3545" }}
+                                        onClick={() => deleteBook(book.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     )
 }

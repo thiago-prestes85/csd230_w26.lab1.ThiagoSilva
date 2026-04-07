@@ -1,9 +1,8 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:8080/api",
+    baseURL: "https://csd230-w26-lab1-thiagosilva.onrender.com"
 });
-
 
 axiosInstance.interceptors.request.use(
     (config) => {
@@ -15,7 +14,6 @@ axiosInstance.interceptors.request.use(
     },
     (error) => Promise.reject(error)
 );
-
 
 axiosInstance.interceptors.response.use(
     (response) => response,

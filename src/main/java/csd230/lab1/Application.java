@@ -24,7 +24,7 @@ public class Application {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 // Allow access to all /api endpoints from any origin
-                registry.addMapping("/api/**").allowedOrigins("*");
+                registry.addMapping("/**").allowedOrigins("*");
             }
         };
     }
